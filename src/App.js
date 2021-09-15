@@ -1,8 +1,16 @@
 
 
 function App() {
+
+  const handleKeyDown = (event) =>{
+    event.preventDefault()
+    const {key} = event
+    console.log('key', key)
+
+  }
+  console.log('oi')
   return (
-    <div className="container">
+    <div className="container" tabIndex='0' onKeyDown={handleKeyDown}>
        <div className='valid-keys'>
           <span className="matched">emer</span>
           <span className="remainder">son</span>
