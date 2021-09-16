@@ -1,7 +1,7 @@
 
 import {useState, useEffect} from 'react'
 import wordList from './resource/words.json'
-import { getWord } from './resource/func'
+import { getWord, isValidKey } from './resource/func'
 import Word from './Word'
 
 const MAX_TYPED_KEYS = 30
@@ -22,6 +22,15 @@ function App() {
      return [...preventTypedKeys, key].slice((MAX_TYPED_KEYS) * -1)
     } ) //vou deixar essa como aprendizado
     // setTYpedKeys([...typedKeys, key]) // porém prefiro essa 
+    if(isValidKey(key, word)){
+     setValidKeys((prev) =>{
+       const isValidLength = prev.length <= word.length
+       const isNextChar = isValidLength && word[prev.length ] === key; // word[prev.length] vai trazer a key que aidna não foi adicionada
+         console.log('word', word[prev.length])
+         console.log('prev', prev)
+       return (isNextChar) ? [...prev, key] : prev
+     })
+    }
 
   }
 
