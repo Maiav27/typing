@@ -9,28 +9,48 @@ function App() {
 
   const [typedKeys, setTypedKeys] = useState([])
   const [word, setWord] = useState('')
+  const [completedWords, setCompletedWords] = useState([])
   const [validKeys, setValidKeys] = useState([])
     useEffect(() =>{
        setWord(getWord(wordList))
+    
     }, [])
-  const handleKeyDown = (event) =>{
-    event.preventDefault()
-    const {key} = event
 
-    setTypedKeys((preventTypedKeys) =>{
-     
-     return [...preventTypedKeys, key].slice((MAX_TYPED_KEYS) * -1)
-    } ) //vou deixar essa como aprendizado
-    // setTYpedKeys([...typedKeys, key]) // porém prefiro essa 
-    if(isValidKey(key, word)){
-     setValidKeys((prev) =>{
-       const isValidLength = prev.length <= word.length
-       const isNextChar = isValidLength && word[prev.length ] === key; // word[prev.length] vai trazer a key que aidna não foi adicionada
-         console.log('word', word[prev.length])
-         console.log('prev', prev)
-       return (isNextChar) ? [...prev, key] : prev
-     })
-    }
+    useEffect(()=>{
+       const wordFromValidKeys =  validKeys.join('').toLowerCase()
+       if(word && word === wordFromValidKeys){
+          //adicionar word ao completedWords
+          //limpar o array validKeys
+          //bucar uma nova palavra
+          let newWord = null
+          do{
+              newWord = getWord(wordList)  
+          }while(completedWords.includes(newWord))
+          
+          setWord(newWord)
+          setValidKeys([]);
+          setCompletedWords((prev) => [...prev, word])
+       }
+    }, [word, validKeys])
+
+
+    const handleKeyDown = (event) =>{
+        event.preventDefault()
+        const {key} = event
+
+        setTypedKeys((preventTypedKeys) =>{
+        
+        return [...preventTypedKeys, key].slice((MAX_TYPED_KEYS) * -1)
+        } ) //vou deixar essa como aprendizado
+        // setTYpedKeys([...typedKeys, key]) // porém prefiro essa 
+        if(isValidKey(key, word)){
+        setValidKeys((prev) =>{
+          const isValidLength = prev.length <= word.length
+          const isNextChar = isValidLength && word[prev.length ] === key; // word[prev.length] vai trazer a key que aidna não foi adicionada
+          
+          return (isNextChar) ? [...prev, key] : prev
+        })
+        }
 
   }
 
@@ -43,12 +63,14 @@ function App() {
        </div>
        <div className="typed-keys">{typedKeys ? typedKeys.join(' ') : null}</div>
        <div className="completed-words">
-          <ol>
-            <li>
-            cidade
-            </li>
-            <li>rua</li>
-          </ol>
+         
+          
+           <ol>
+       
+            { completedWords.length > 0 ? completedWords.map((word)=> <li key={word}>{word}</li>) : null}
+           </ol>
+           
+         
        </div>
     </div>
   );
